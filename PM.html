@@ -1,0 +1,1756 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Workforce Management Dashboard</title>
+
+    <!-- External CDNs -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Anton&family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=Moontime&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+    <!-- Link to our clean stylesheet -->
+    <link rel="stylesheet" href="PM.css?v=2" />
+</head>
+
+<body>
+    <div class="app-shell">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <div class="brand-icon"><i class="fa-solid fa-user-clock"></i></div>
+                <div>
+                    <div class="brand-title display-font">TRAVEL &amp; TOUR</div>
+                    <div class="brand-sub script-font">Workforce Dept.</div>
+                </div>
+            </div>
+
+            <div class="nav-label">Modules</div>
+            <nav class="module-nav" id="moduleNav">
+                <button class="module-btn active" data-view="overview">
+                    <i class="fa-solid fa-grip"></i><span>Overview</span><i class="fa-solid fa-chevron-right chev"></i>
+                </button>
+                <button class="module-btn" data-view="ta" id="btnNavTA">
+                    <i class="fa-solid fa-fingerprint"></i><span>Time & Attendance</span><i
+                        class="fa-solid fa-chevron-right chev"></i>
+                </button>
+                <button class="module-btn" data-view="ssm" id="btnNavSSM">
+                    <i class="fa-solid fa-calendar-days"></i><span>Shift / Schedule Mgmt</span><i
+                        class="fa-solid fa-chevron-right chev"></i>
+                </button>
+                <button class="module-btn" data-view="lm" id="btnNavLM">
+                    <i class="fa-solid fa-plane-departure"></i><span>Leave Management</span><i
+                        class="fa-solid fa-chevron-right chev"></i>
+                </button>
+                <button class="module-btn" data-view="tsm" id="btnNavTSM">
+                    <i class="fa-solid fa-file-invoice"></i><span>Timesheet Management</span><i
+                        class="fa-solid fa-chevron-right chev"></i>
+                </button>
+                <button class="module-btn" data-view="wa" id="btnNavWA">
+                    <i class="fa-solid fa-chart-line"></i><span>Workforce Analytics</span><i
+                        class="fa-solid fa-chevron-right chev"></i>
+                </button>
+                <button class="module-btn" data-view="profile" id="btnNavProfile">
+                    <i class="fa-solid fa-id-badge"></i><span>My Profile</span><i
+                        class="fa-solid fa-chevron-right chev"></i>
+                </button>
+                <button class="module-btn admin-only" data-view="users" id="btnNavUsers">
+                    <i class="fa-solid fa-users-gear"></i><span>User Accounts</span><i
+                        class="fa-solid fa-chevron-right chev"></i>
+                </button>
+            </nav>
+
+            <div class="status-box">
+                <div class="label">System Status</div>
+                <div class="text">
+                    <span class="status-dot"></span>All systems operational
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn" type="button">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Log out</span>
+            </button>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main">
+            <div class="topbar">
+                <div class="d-flex align-items-center gap-2">
+                    <button class="icon-btn d-md-none" id="menuToggle">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div>
+                        <h1 class="display-font" id="viewTitle">OVERVIEW</h1>
+                        <p id="viewSubtitle">All workforce modules at a glance</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <!-- Account Type Badge (read-only — determined by the logged-in account) -->
+                    <div class="role-badge me-1" id="roleBadge">
+                        <i class="fa-solid fa-user-tie" id="roleBadgeIcon"></i>
+                        <span id="roleBadgeText">HR Account</span>
+                    </div>
+
+                    <div class="search-box d-none d-sm-flex">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="employeeSearch" class="search-input" placeholder="Search employees..."
+                            autocomplete="off" />
+                    </div>
+
+                    <!-- Notifications Dropdown -->
+                    <div class="dropdown">
+                        <button class="icon-btn" type="button" id="notiDropdownBtn" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="fa-regular fa-bell"></i>
+                            <span class="badge-dot" id="notiBadge">3</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end shadow border-0 p-0 notification-card"
+                            aria-labelledby="notiDropdownBtn">
+                            <div class="notification-header">
+                                <span>Notifications</span>
+                                <button class="notification-clear-btn" onclick="clearAllNotifications(event)">Clear
+                                    all</button>
+                            </div>
+                            <div class="notification-list-container" id="notiList">
+                                <!-- Dynamic Notifications -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="avatar" id="userAvatar">HR</div>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- OVERVIEW -->
+                <section class="view-section active" id="view-overview">
+                    <div class="row g-4 mb-4">
+                        <div class="col-6 col-xl-3">
+                            <div class="kpi-card">
+                                <div class="kpi-icon accent">
+                                    <i class="fa-solid fa-user-clock"></i>
+                                </div>
+                                <div class="kpi-value" id="ovClockedIn">0</div>
+                                <div class="kpi-label">Employees Clocked In Today</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-xl-3">
+                            <div class="kpi-card">
+                                <div class="kpi-icon">
+                                    <i class="fa-solid fa-chart-pie"></i>
+                                </div>
+                                <div class="kpi-value" id="ovAttendanceRate">0%</div>
+                                <div class="kpi-label">Avg. Attendance Rate</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-xl-3">
+                            <div class="kpi-card">
+                                <div class="kpi-icon">
+                                    <i class="fa-solid fa-plane-departure"></i>
+                                </div>
+                                <div class="kpi-value" id="ovOnLeave">0</div>
+                                <div class="kpi-label">On Leave Today</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-xl-3">
+                            <div class="kpi-card">
+                                <div class="kpi-icon">
+                                    <i class="fa-solid fa-file-invoice"></i>
+                                </div>
+                                <div class="kpi-value" id="ovPendingApprovals">0</div>
+                                <div class="kpi-label">Pending Timesheet Approvals</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-12 col-xl-8">
+                            <div class="panel-card h-100">
+                                <div class="panel-title">Weekly Attendance Trend</div>
+                                <canvas id="chartAttendanceTrend" height="100"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-12 col-xl-4">
+                            <div class="panel-card h-100">
+                                <div class="panel-title">Leave Type Breakdown</div>
+                                <canvas id="chartLeaveType" height="100"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-12 col-xl-8">
+                            <div class="panel-card h-100">
+                                <div class="panel-title">Attendance by Department</div>
+                                <canvas id="chartDeptAttendance" height="100"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-12 col-xl-4">
+                            <div class="panel-card h-100">
+                                <div class="panel-title">Recent Timesheet Activity</div>
+                                <div class="d-flex flex-column gap-3" id="recentActivity"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TIME & ATTENDANCE -->
+                <section class="view-section" id="view-ta">
+                    <div class="row g-4 mb-4">
+                        <div class="col-12 col-sm-4">
+                            <div class="kpi-card">
+                                <div class="kpi-icon accent">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                </div>
+                                <div class="kpi-value" id="taOnTime">0</div>
+                                <div class="kpi-label">On Time Today</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="kpi-card">
+                                <div class="kpi-icon">
+                                    <i class="fa-regular fa-clock"></i>
+                                </div>
+                                <div class="kpi-value" id="taLate">0</div>
+                                <div class="kpi-label">Late Arrivals Today</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="kpi-card">
+                                <div class="kpi-icon">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                </div>
+                                <div class="kpi-value" id="taAbsent">0</div>
+                                <div class="kpi-label">Absent Today</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-card mb-4 employee-only" id="taMyStatsPanel">
+                        <div class="panel-title">My Attendance Statistics</div>
+                        <div class="row g-3">
+                            <div class="col-4">
+                                <div class="kpi-value" id="myAttendanceRate" style="font-size:1.5rem;">0%</div>
+                                <div class="kpi-label">My Attendance Rate</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="kpi-value" id="myPresentCount" style="font-size:1.5rem;">0</div>
+                                <div class="kpi-label">Days Present Logged</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="kpi-value" id="myLateCount" style="font-size:1.5rem;">0</div>
+                                <div class="kpi-label">Days Late Logged</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-card">
+                        <div class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
+                            <div class="panel-title mb-0">Daily Attendance Log</div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm text-white employee-only" style="background: var(--c-blue)"
+                                    onclick="clockInOut()">
+                                    <i class="fa-solid fa-fingerprint me-1"></i>Clock In / Clock Out
+                                </button>
+                                <button class="btn btn-sm text-white admin-only" style="background: var(--c-blue)"
+                                    data-bs-toggle="modal" data-bs-target="#modalTA">
+                                    <i class="fa-solid fa-plus me-1"></i>Add Entry
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Department</th>
+                                        <th>Clock In</th>
+                                        <th>Clock Out</th>
+                                        <th>Status</th>
+                                        <th class="admin-only">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="taRows"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SHIFT / SCHEDULE MANAGEMENT -->
+                <section class="view-section" id="view-ssm">
+                    <div class="row g-4 mb-4">
+                        <div class="col-12 col-sm-4">
+                            <div class="kpi-card">
+                                <div class="kpi-icon accent">
+                                    <i class="fa-solid fa-calendar-days"></i>
+                                </div>
+                                <div class="kpi-value" id="ssmScheduled">0</div>
+                                <div class="kpi-label">Shifts Scheduled This Week</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="kpi-card">
+                                <div class="kpi-icon">
+                                    <i class="fa-solid fa-user-plus"></i>
+                                </div>
+                                <div class="kpi-value" id="ssmOpen">0</div>
+                                <div class="kpi-label">Open / Unfilled Shifts</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="kpi-card">
+                                <div class="kpi-icon">
+                                    <i class="fa-solid fa-people-group"></i>
+                                </div>
+                                <div class="kpi-value" id="ssmCoverage">0%</div>
+                                <div class="kpi-label">Shift Coverage</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-card">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <div class="panel-title mb-0">Weekly Shift Schedule</div>
+                            <button class="btn btn-sm text-white scheduler-only" style="background: var(--c-blue)"
+                                data-bs-toggle="modal" data-bs-target="#modalSSM">
+                                <i class="fa-solid fa-plus me-1"></i>Add Shift
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Shift</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Location</th>
+                                        <th>Status</th>
+                                        <th class="scheduler-only">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ssmRows"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- LEAVE MANAGEMENT -->
+                <section class="view-section" id="view-lm">
+                    <div class="row g-4 mb-4">
+                        <div class="col-12 col-sm-4">
+                            <div class="kpi-card">
+                                <div class="kpi-icon accent">
+                                    <i class="fa-solid fa-plane-departure"></i>
+                                </div>
+                                <div class="kpi-value" id="lmTotalRequests">0</div>
+                                <div class="kpi-label">Total Leave Requests</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="kpi-card">
+                                <div class="kpi-icon">
+                                    <i class="fa-regular fa-clock"></i>
+                                </div>
+                                <div class="kpi-value" id="lmPendingRequests">0</div>
+                                <div class="kpi-label">Pending Approvals</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="kpi-card">
+                                <div class="kpi-icon">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                </div>
+                                <div class="kpi-value" id="lmApprovedRequests">0</div>
+                                <div class="kpi-label">Approved Active Leaves</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-card">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <div class="panel-title mb-0">Employee Leave Requests</div>
+                            <button class="btn btn-sm text-white" style="background: var(--c-blue)"
+                                data-bs-toggle="modal" data-bs-target="#modalLM">
+                                <i class="fa-solid fa-plus me-1"></i>Request Leave
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Leave Type</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Reason</th>
+                                        <th>Status</th>
+                                        <th class="approver-only">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lmRows"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TIMESHEET MANAGEMENT -->
+                <section class="view-section" id="view-tsm">
+                    <div class="row g-4 mb-4">
+                        <div class="col-12 col-sm-4">
+                            <div class="kpi-card">
+                                <div class="kpi-icon accent">
+                                    <i class="fa-solid fa-file-circle-check"></i>
+                                </div>
+                                <div class="kpi-value" id="tsmSubmitted">0</div>
+                                <div class="kpi-label">Timesheets Submitted</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="kpi-card">
+                                <div class="kpi-icon">
+                                    <i class="fa-regular fa-clock"></i>
+                                </div>
+                                <div class="kpi-value" id="tsmPending">0</div>
+                                <div class="kpi-label">Pending Approval</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="kpi-card">
+                                <div class="kpi-icon">
+                                    <i class="fa-solid fa-hourglass-half"></i>
+                                </div>
+                                <div class="kpi-value" id="tsmOvertime">0h</div>
+                                <div class="kpi-label">Total Overtime Hours</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-card mb-4">
+                        <div class="panel-title">Overtime Hours Trend</div>
+                        <canvas id="chartOvertime" height="100"></canvas>
+                    </div>
+                    <div class="panel-card">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <div class="panel-title mb-0">Timesheet Records</div>
+                            <button class="btn btn-sm text-white" style="background: var(--c-blue)"
+                                data-bs-toggle="modal" data-bs-target="#modalTSM">
+                                <i class="fa-solid fa-plus me-1"></i><span id="tsmAddBtnLabel">Add Timesheet</span>
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Week Ending</th>
+                                        <th>Regular Hrs</th>
+                                        <th>OT Hrs</th>
+                                        <th>Status</th>
+                                        <th class="approver-only">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tsmRows"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- WORKFORCE ANALYTICS -->
+                <section class="view-section" id="view-wa">
+                    <div class="row g-4 mb-4">
+                        <div class="col-12 col-sm-4">
+                            <div class="kpi-card">
+                                <div class="kpi-icon accent">
+                                    <i class="fa-solid fa-chart-pie"></i>
+                                </div>
+                                <div class="kpi-value" id="waAttendanceRate">0%</div>
+                                <div class="kpi-label">Avg. Attendance Rate</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="kpi-card">
+                                <div class="kpi-icon">
+                                    <i class="fa-solid fa-right-from-bracket"></i>
+                                </div>
+                                <div class="kpi-value" id="waTurnover">0%</div>
+                                <div class="kpi-label">Turnover Rate</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="kpi-card">
+                                <div class="kpi-icon">
+                                    <i class="fa-solid fa-user-slash"></i>
+                                </div>
+                                <div class="kpi-value" id="waAbsenteeism">0%</div>
+                                <div class="kpi-label">Absenteeism Rate</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-4 mb-4">
+                        <div class="col-12 col-xl-6">
+                            <div class="panel-card h-100">
+                                <div class="panel-title">Attendance Rate by Department</div>
+                                <canvas id="chartWaDept" height="100"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-12 col-xl-6">
+                            <div class="panel-card h-100">
+                                <div class="panel-title">Headcount Trend</div>
+                                <canvas id="chartHeadcount" height="100"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-card">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <div class="panel-title mb-0">Department Workforce Summary</div>
+                            <button class="btn btn-sm text-white admin-only" style="background: var(--c-blue)"
+                                data-bs-toggle="modal" data-bs-target="#modalWA">
+                                <i class="fa-solid fa-plus me-1"></i>Add Department
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>Department</th>
+                                        <th>Headcount</th>
+                                        <th>Avg. Attendance %</th>
+                                        <th>Overtime Hrs</th>
+                                        <th>Status</th>
+                                        <th class="admin-only">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="waRows"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MY PROFILE -->
+                <section class="view-section" id="view-profile">
+                    <div class="row g-4">
+                        <div class="col-12 col-xl-6">
+                            <div class="panel-card">
+                                <div class="panel-title">My Profile</div>
+                                <form id="formProfile">
+                                    <div class="mb-3">
+                                        <label class="form-label">Full Name</label>
+                                        <input type="text" class="form-control" id="profName" required />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="profEmail" disabled />
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label">Phone</label>
+                                            <input type="text" class="form-control" id="profPhone" />
+                                        </div>
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label">Country</label>
+                                            <input type="text" class="form-control" id="profCountry" />
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Account Type</label>
+                                        <input type="text" class="form-control" id="profRole" disabled />
+                                    </div>
+                                    <button type="submit" class="btn text-white"
+                                        style="background: var(--c-blue)">Save Changes</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- USER ACCOUNTS (HR / ADMIN) -->
+                <section class="view-section" id="view-users">
+                    <div class="panel-card">
+                        <div class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
+                            <div class="panel-title mb-0">User Accounts</div>
+                            <span class="text-muted" style="font-size:0.8rem;">Manage roles &amp; system access for
+                                registered accounts</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Username</th>
+                                        <th>Role</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersRows"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODALS -->
+    <!-- MODAL: Time & Attendance -->
+    <div class="modal fade" id="modalTA" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="formTA">
+                    <div class="modal-header">
+                        <h5 class="modal-title heading-font">Add Attendance Entry</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Employee Name</label>
+                            <input type="text" class="form-control" id="taName" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Department</label>
+                            <input type="text" class="form-control" id="taDept" required />
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Clock In</label>
+                                <input type="time" class="form-control" id="taIn" />
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Clock Out</label>
+                                <input type="time" class="form-control" id="taOut" />
+                            </div>
+                        </div>
+                        <div class="mb-1">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="taStatus">
+                                <option>Present</option>
+                                <option>Late</option>
+                                <option>Absent</option>
+                                <option>On Leave</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn text-white" style="background: var(--c-blue)">Save
+                            Entry</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Shift / Schedule -->
+    <div class="modal fade" id="modalSSM" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="formSSM">
+                    <div class="modal-header">
+                        <h5 class="modal-title heading-font">Add Shift</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Employee Name</label>
+                            <input type="text" class="form-control" id="ssmName" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Shift</label>
+                            <select class="form-select" id="ssmShift">
+                                <option>Morning</option>
+                                <option>Afternoon</option>
+                                <option>Night</option>
+                                <option>Split</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Date</label>
+                                <input type="date" class="form-control" id="ssmDate" />
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Time</label>
+                                <input type="text" class="form-control" id="ssmTime"
+                                    placeholder="e.g. 8:00 AM - 5:00 PM" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-control" id="ssmLocation" />
+                        </div>
+                        <div class="mb-1">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="ssmStatus">
+                                <option>Scheduled</option>
+                                <option>Filled</option>
+                                <option>Open</option>
+                                <option>On Call</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn text-white" style="background: var(--c-blue)">Save
+                            Shift</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Leave Management -->
+    <div class="modal fade" id="modalLM" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="formLM">
+                    <div class="modal-header">
+                        <h5 class="modal-title heading-font">Request Leave</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Employee Name</label>
+                            <input type="text" class="form-control" id="lmName" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Leave Type</label>
+                            <select class="form-select" id="lmType">
+                                <option>Vacation</option>
+                                <option>Sick</option>
+                                <option>Personal</option>
+                                <option>Unpaid</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Start Date</label>
+                                <input type="date" class="form-control" id="lmStart" required />
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label">End Date</label>
+                                <input type="date" class="form-control" id="lmEnd" required />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Reason</label>
+                            <input type="text" class="form-control" id="lmReason" placeholder="e.g. Family Vacation" />
+                        </div>
+                        <div class="mb-1" id="lmStatusWrapper">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="lmStatus">
+                                <option>Pending</option>
+                                <option>On Leave</option>
+                                <option>Rejected</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn text-white" style="background: var(--c-blue)">Submit
+                            Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Timesheet -->
+    <div class="modal fade" id="modalTSM" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="formTSM">
+                    <div class="modal-header">
+                        <h5 class="modal-title heading-font">Add Timesheet</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Employee Name</label>
+                            <input type="text" class="form-control" id="tsmName" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Week Ending</label>
+                            <input type="date" class="form-control" id="tsmWeek" />
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Regular Hrs</label>
+                                <input type="number" step="0.5" min="0" class="form-control" id="tsmRegular"
+                                    value="0" />
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label">OT Hrs</label>
+                                <input type="number" step="0.5" min="0" class="form-control" id="tsmOT" value="0" />
+                            </div>
+                        </div>
+                        <div class="mb-1" id="tsmStatusWrapper">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="tsmStatus">
+                                <option>Pending</option>
+                                <option>Approved</option>
+                                <option>Rejected</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn text-white" style="background: var(--c-blue)">Save
+                            Timesheet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Workforce Analytics -->
+    <div class="modal fade" id="modalWA" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="formWA">
+                    <div class="modal-header">
+                        <h5 class="modal-title heading-font">Add Department Summary</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Department</label>
+                            <input type="text" class="form-control" id="waDept" required />
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Headcount</label>
+                                <input type="number" min="0" class="form-control" id="waHeadcount" value="0" />
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Avg. Attendance %</label>
+                                <input type="number" min="0" max="100" class="form-control" id="waRate" value="0" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Overtime Hrs</label>
+                            <input type="number" min="0" class="form-control" id="waOvertime" value="0" />
+                        </div>
+                        <div class="mb-1">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="waStatus">
+                                <option>Active</option>
+                                <option>Under Review</option>
+                                <option>Critical</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn text-white" style="background: var(--c-blue)">Save
+                            Department</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        /* ---------------- AUTH GUARD ---------------- */
+        const centinelSessionRaw = localStorage.getItem("centinelSession") || sessionStorage.getItem("centinelSession");
+        if (!centinelSessionRaw) {
+            window.location.href = "travel-login.html";
+        }
+        const centinelSession = centinelSessionRaw ? JSON.parse(centinelSessionRaw) : { name: "Guest", role: "hr" };
+
+        /* ---------------- DATA STATE ---------------- */
+        const COLORS = {
+            navy900: "#001229",
+            navy800: "#07203c",
+            navy700: "#082a57",
+            slate600: "#213d5d",
+            blue: "#2f94dc",
+            blue100: "#d2ecff",
+            white: "#ffffff",
+        };
+
+        const attendanceTrend = [
+            { wk: "W1", present: 85, absent: 5 },
+            { wk: "W2", present: 88, absent: 4 },
+            { wk: "W3", present: 90, absent: 3 },
+            { wk: "W4", present: 92, absent: 2 },
+            { wk: "W5", present: 94, absent: 2 },
+            { wk: "W6", present: 95, absent: 1 },
+        ];
+
+        const leaveTypeData = [
+            { name: "Vacation", value: 12 },
+            { name: "Sick", value: 8 },
+            { name: "Personal", value: 4 },
+            { name: "Unpaid", value: 2 },
+        ];
+
+        const deptAttendance = [
+            { dept: "Engineering", rate: 96 },
+            { dept: "Operations", rate: 92 },
+            { dept: "Marketing", rate: 89 },
+            { dept: "Finance", rate: 94 },
+            { dept: "HR", rate: 95 },
+        ];
+
+        const overtimeTrend = [
+            { wk: "W1", hours: 14 },
+            { wk: "W2", hours: 22 },
+            { wk: "W3", hours: 18 },
+            { wk: "W4", hours: 25 },
+            { wk: "W5", hours: 30 },
+            { wk: "W6", hours: 15 },
+        ];
+
+        const headcountTrend = [
+            { mo: "Jan", count: 45 },
+            { mo: "Feb", count: 48 },
+            { mo: "Mar", count: 50 },
+            { mo: "Apr", count: 52 },
+            { mo: "May", count: 55 },
+            { mo: "Jun", count: 58 },
+        ];
+
+        /* ---------------- API CONFIG ----------------
+           All records now live in the MySQL database via the PHP
+           endpoints in /api instead of hard-coded JS arrays. */
+        const API_BASE = "api/";
+
+        async function apiGet(path) {
+            const res = await fetch(API_BASE + path);
+            if (!res.ok) throw new Error("GET " + path + " failed");
+            return res.json();
+        }
+        async function apiSend(method, path, body) {
+            const res = await fetch(API_BASE + path, {
+                method: method,
+                headers: { "Content-Type": "application/json" },
+                body: body !== undefined ? JSON.stringify(body) : undefined,
+            });
+            const result = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(result.error || (method + " " + path + " failed"));
+            return result;
+        }
+
+        let attendanceLog = [];
+        let shiftSchedule = [];
+        let leaveRequests = [];
+        let timesheets = [];
+        let deptSummary = [];
+        let allUsers = [];
+
+        async function loadAllData() {
+            try {
+                const [att, shifts, leaves, ts, depts, users] = await Promise.all([
+                    apiGet("attendance.php"),
+                    apiGet("shifts.php"),
+                    apiGet("leave.php"),
+                    apiGet("timesheets.php"),
+                    apiGet("departments.php"),
+                    apiGet("users.php"),
+                ]);
+                attendanceLog = att;
+                shiftSchedule = shifts;
+                leaveRequests = leaves;
+                timesheets = ts;
+                deptSummary = depts;
+                allUsers = users;
+            } catch (err) {
+                console.error("Failed to load data from the database:", err);
+                document.getElementById("content").insertAdjacentHTML("afterbegin",
+                    `<div class="alert alert-danger" role="alert">
+                        Could not connect to the database. Make sure PHP/MySQL is running, database/schema.sql
+                        has been imported, and this page is being loaded via http://localhost — not opened
+                        directly as a file.
+                    </div>`);
+            }
+            renderAll();
+            loadProfileForm();
+        }
+
+        const VIEW_META = {
+            overview: { title: "OVERVIEW", subtitle: "All workforce modules at a glance" },
+            ta: { title: "TIME & ATTENDANCE", subtitle: "Daily clock-in / clock-out tracking" },
+            ssm: { title: "SHIFT / SCHEDULE MANAGEMENT", subtitle: "Plan and manage employee shifts" },
+            lm: { title: "LEAVE MANAGEMENT", subtitle: "Track, request, and approve employee leaves" },
+            tsm: { title: "TIMESHEET MANAGEMENT", subtitle: "Review, approve, and track hours" },
+            wa: { title: "WORKFORCE ANALYTICS", subtitle: "Trends across attendance, turnover & overtime" },
+            profile: { title: "MY PROFILE", subtitle: "Manage your personal account details" },
+            users: { title: "USER ACCOUNTS", subtitle: "Manage registered accounts and system access" },
+        };
+
+        /* ---------------- HR / MANAGER / EMPLOYEE MODE CONTROL ---------------- */
+        let currentSystemMode = "hr";
+
+        function switchSystemMode(mode) {
+            currentSystemMode = mode;
+
+            const badgeText = document.getElementById("roleBadgeText");
+            const badgeIcon = document.getElementById("roleBadgeIcon");
+            const badgeLabels = { hr: "HR Account", manager: "Manager Account", employee: "Employee Account" };
+            const badgeIcons = { hr: "fa-user-tie", manager: "fa-user-gear", employee: "fa-user" };
+            const avatarLabels = { hr: "HR", manager: "MG", employee: "EM" };
+            badgeText.textContent = badgeLabels[mode] || badgeLabels.hr;
+            badgeIcon.className = "fa-solid " + (badgeIcons[mode] || badgeIcons.hr);
+            document.getElementById("userAvatar").textContent = avatarLabels[mode] || avatarLabels.hr;
+
+            const waNav = document.getElementById("btnNavWA");
+            const statusWrapper = document.getElementById("lmStatusWrapper");
+            const tsmStatusWrapper = document.getElementById("tsmStatusWrapper");
+            const tsmAddBtnLabel = document.getElementById("tsmAddBtnLabel");
+
+            // admin-only    -> HR / Admin: manage attendance, shifts, departments, user accounts
+            // scheduler-only -> Manager + HR: create / edit team schedules
+            // approver-only  -> Manager + HR: approve/reject leave & timesheets
+            // employee-only  -> Employee: self-service actions (clock in/out, own stats)
+            document.querySelectorAll(".admin-only").forEach(el => el.style.display = (mode === "hr") ? "" : "none");
+            document.querySelectorAll(".scheduler-only").forEach(el => el.style.display = (mode === "hr" || mode === "manager") ? "" : "none");
+            document.querySelectorAll(".approver-only").forEach(el => el.style.display = (mode === "hr" || mode === "manager") ? "" : "none");
+            document.querySelectorAll(".employee-only").forEach(el => el.style.display = (mode === "employee") ? "" : "none");
+
+            if (mode === "employee") {
+                // Employees keep Time & Attendance, Schedule, Leave, and Timesheet (self-service submission),
+                // but not Workforce Analytics or User Accounts (HR/Manager-level reporting & admin).
+                waNav.style.display = "none";
+
+                if (statusWrapper) statusWrapper.style.display = "none";
+                if (tsmStatusWrapper) tsmStatusWrapper.style.display = "none";
+                document.getElementById("lmStatus").value = "Pending";
+                document.getElementById("tsmStatus").value = "Pending";
+                if (tsmAddBtnLabel) tsmAddBtnLabel.textContent = "Submit Timesheet";
+
+                const currentActiveBtn = document.querySelector(".module-btn.active");
+                if (currentActiveBtn && (currentActiveBtn.dataset.view === "wa" || currentActiveBtn.dataset.view === "users")) {
+                    document.querySelector('.module-btn[data-view="overview"]').click();
+                }
+            } else {
+                // Manager and HR / Administrator both see every module.
+                waNav.style.display = "flex";
+                if (statusWrapper) statusWrapper.style.display = "block";
+                if (tsmStatusWrapper) tsmStatusWrapper.style.display = "block";
+                if (tsmAddBtnLabel) tsmAddBtnLabel.textContent = "Add Timesheet";
+            }
+
+            loadProfileForm();
+            renderAll();
+        }
+
+        /* ---------------- NOTIFICATIONS ---------------- */
+        let systemNotifications = [
+            { id: 1, title: "New Leave Request", desc: "Jane Doe requested Vacation leave.", icon: "fa-plane-departure", color: "blue", time: "10m ago", unread: true },
+            { id: 2, title: "Attendance Exception Alert", desc: "Jane Smith clocked in Late (09:15 AM).", icon: "fa-triangle-exclamation", color: "orange", time: "1h ago", unread: true },
+            { id: 3, title: "System Update Complete", desc: "All payroll cycle systems verified.", icon: "fa-circle-check", color: "green", time: "4h ago", unread: false }
+        ];
+
+        function renderNotifications() {
+            const notiBadge = document.getElementById("notiBadge");
+            const notiList = document.getElementById("notiList");
+            const unreadCount = systemNotifications.filter(n => n.unread).length;
+
+            if (unreadCount > 0) {
+                notiBadge.textContent = unreadCount;
+                notiBadge.style.display = "flex";
+            } else {
+                notiBadge.style.display = "none";
+            }
+
+            if (systemNotifications.length === 0) {
+                notiList.innerHTML = `<p class="text-center text-muted py-4 mb-0" style="font-size:0.8rem;">All caught up!</p>`;
+                return;
+            }
+
+            notiList.innerHTML = systemNotifications.map(n => {
+                let bgClass = "bg-light text-secondary";
+                if (n.color === "blue") bgClass = "bg-primary-subtle text-primary";
+                if (n.color === "orange") bgClass = "bg-warning-subtle text-warning";
+                if (n.color === "green") bgClass = "bg-success-subtle text-success";
+
+                return `
+            <a href="#" class="notification-item ${n.unread ? 'unread' : ''}" onclick="markAsRead(${n.id}, event)">
+              <div class="notification-item-icon ${bgClass}">
+                <i class="fa-solid ${n.icon}"></i>
+              </div>
+              <div class="notification-item-text">
+                <div class="notification-item-title">${n.title}</div>
+                <p class="notification-item-desc">${n.desc}</p>
+                <div class="notification-item-time">${n.time}</div>
+              </div>
+            </a>
+          `;
+            }).join("");
+        }
+
+        function addNotification(title, desc, icon, color) {
+            systemNotifications.unshift({
+                id: Date.now(),
+                title: title,
+                desc: desc,
+                icon: icon || "fa-bell",
+                color: color || "blue",
+                time: "Just now",
+                unread: true
+            });
+            renderNotifications();
+        }
+
+        function markAsRead(id, event) {
+            event.preventDefault();
+            const notification = systemNotifications.find(n => n.id === id);
+            if (notification) {
+                notification.unread = false;
+            }
+            renderNotifications();
+        }
+
+        function clearAllNotifications(event) {
+            event.stopPropagation();
+            systemNotifications = [];
+            renderNotifications();
+        }
+
+        /* ---------------- TABLE HELPERS & RENDERING ---------------- */
+        function pillClass(status) {
+            const map = {
+                Present: "pill-present", Active: "pill-active", Approved: "pill-approved", Filled: "pill-filled",
+                "On Call": "pill-oncall", Scheduled: "pill-scheduled", Pending: "pill-pending", "Under Review": "pill-review",
+                Absent: "pill-absent", Rejected: "pill-rejected", Critical: "pill-critical", Late: "pill-late",
+                Open: "pill-open", "On Leave": "pill-leave", "1 Alert": "pill-alert",
+            };
+            return map[status] || "pill-pending";
+        }
+        function pill(status) {
+            return `<span class="pill ${pillClass(status)}">${status}</span>`;
+        }
+
+        function delBtn(type, idx, roles) {
+            roles = roles || ["hr"];
+            if (!roles.includes(currentSystemMode)) return "";
+            return `<button class="icon-btn" style="width:30px;height:30px;border-radius:8px;" onclick="deleteRow('${type}', ${idx})" title="Delete"><i class="fa-solid fa-trash" style="font-size:.75rem;"></i></button>`;
+        }
+
+        function approverActions(type, idx, status) {
+            // Managers and HR can approve/reject pending leave & timesheet requests; HR can also delete records.
+            if (currentSystemMode !== "hr" && currentSystemMode !== "manager") return "";
+            const approvedStatus = type === "lm" ? "On Leave" : "Approved";
+            let btns = "";
+            if (status === "Pending") {
+                btns += `<button class="icon-btn" style="width:30px;height:30px;border-radius:8px;" onclick="approveRow('${type}', ${idx}, '${approvedStatus}')" title="Approve"><i class="fa-solid fa-check" style="font-size:.75rem;color:#1a7a3c;"></i></button> `;
+                btns += `<button class="icon-btn" style="width:30px;height:30px;border-radius:8px;" onclick="approveRow('${type}', ${idx}, 'Rejected')" title="Reject"><i class="fa-solid fa-xmark" style="font-size:.75rem;color:#b3261e;"></i></button> `;
+            }
+            btns += delBtn(type, idx, ["hr"]);
+            return btns;
+        }
+
+        async function approveRow(type, idx, newStatus) {
+            try {
+                const endpoint = type === "lm" ? "leave.php" : "timesheets.php";
+                await apiSend("PATCH", `${endpoint}?id=${idx}`, { status: newStatus });
+                await loadAllData();
+            } catch (err) {
+                alert("Could not update the record: " + err.message);
+            }
+        }
+
+        function renderTA() {
+            const isEmployee = currentSystemMode === "employee";
+            const rows = isEmployee ? attendanceLog.filter(a => a.name === centinelSession.name) : attendanceLog;
+            const tbody = document.getElementById("taRows");
+            if (!rows.length) {
+                tbody.innerHTML = `<tr><td colspan="6" class="search-no-results">${isEmployee ? "No attendance records yet — clock in to get started." : "No records found."}</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = rows.map((a) => {
+                const idx = a.id;
+                return `
+          <tr>
+            <td>${a.name}</td>
+            <td>${a.dept}</td>
+            <td>${a.clockIn}</td>
+            <td>${a.clockOut}</td>
+            <td>${pill(a.status)}</td>
+            ${currentSystemMode === 'hr' ? `<td>${delBtn("ta", idx)}</td>` : ''}
+          </tr>
+        `;
+            }).join("");
+        }
+
+        function renderSSM() {
+            const isEmployee = currentSystemMode === "employee";
+            const rows = isEmployee ? shiftSchedule.filter(s => s.name === centinelSession.name) : shiftSchedule;
+            const tbody = document.getElementById("ssmRows");
+            if (!rows.length) {
+                tbody.innerHTML = `<tr><td colspan="7" class="search-no-results">${isEmployee ? "No shifts scheduled for you yet." : "No shifts found."}</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = rows.map((s) => {
+                const idx = s.id;
+                return `
+          <tr>
+            <td>${s.name}</td>
+            <td>${s.shift}</td>
+            <td>${s.date}</td>
+            <td>${s.time}</td>
+            <td>${s.location}</td>
+            <td>${pill(s.status)}</td>
+            ${(currentSystemMode === 'hr' || currentSystemMode === 'manager') ? `<td>${delBtn("ssm", idx, ["manager", "hr"])}</td>` : ''}
+          </tr>
+        `;
+            }).join("");
+        }
+
+        function renderLM() {
+            const isEmployee = currentSystemMode === "employee";
+            const rows = isEmployee ? leaveRequests.filter(l => l.name === centinelSession.name) : leaveRequests;
+            const tbody = document.getElementById("lmRows");
+            if (!rows.length) {
+                tbody.innerHTML = `<tr><td colspan="7" class="search-no-results">${isEmployee ? "You haven't filed any leave requests yet." : "No leave requests found."}</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = rows.map((l) => {
+                const idx = l.id;
+                return `
+          <tr>
+            <td>${l.name}</td>
+            <td>${l.type}</td>
+            <td>${l.start}</td>
+            <td>${l.end}</td>
+            <td>${l.reason}</td>
+            <td>${pill(l.status)}</td>
+            ${(currentSystemMode === 'hr' || currentSystemMode === 'manager') ? `<td>${approverActions("lm", idx, l.status)}</td>` : ''}
+          </tr>
+        `;
+            }).join("");
+        }
+
+        function renderTSM() {
+            const isEmployee = currentSystemMode === "employee";
+            const rows = isEmployee ? timesheets.filter(t => t.name === centinelSession.name) : timesheets;
+            const tbody = document.getElementById("tsmRows");
+            if (!rows.length) {
+                tbody.innerHTML = `<tr><td colspan="6" class="search-no-results">${isEmployee ? "You haven't submitted any timesheets yet." : "No timesheets found."}</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = rows.map((t) => {
+                const idx = t.id;
+                return `
+          <tr>
+            <td>${t.name}</td>
+            <td>${t.weekEnding}</td>
+            <td>${t.regular}</td>
+            <td>${t.overtime}</td>
+            <td>${pill(t.status)}</td>
+            ${(currentSystemMode === 'hr' || currentSystemMode === 'manager') ? `<td>${approverActions("tsm", idx, t.status)}</td>` : ''}
+          </tr>
+        `;
+            }).join("");
+        }
+
+        function renderWA() {
+            document.getElementById("waRows").innerHTML = deptSummary.map((d) => `
+          <tr>
+            <td>${d.dept}</td>
+            <td>${d.headcount}</td>
+            <td>${d.rate}%</td>
+            <td>${d.overtime}</td>
+            <td>${pill(d.status)}</td>
+            ${currentSystemMode === 'hr' ? `<td>${delBtn("wa", d.id)}</td>` : ''}
+          </tr>
+        `).join("");
+        }
+
+        function renderRecentActivity() {
+            document.getElementById("recentActivity").innerHTML = timesheets.slice(-4).reverse().map(t => `
+          <div class="activity-item">
+            <div class="activity-icon"><i class="fa-solid fa-file-invoice"></i></div>
+            <div>
+              <div class="activity-title">${t.name}</div>
+              <div class="activity-meta">Week ending ${t.weekEnding || "—"} · ${t.status}</div>
+            </div>
+          </div>
+        `).join("");
+        }
+
+        function updateKPIs() {
+            const onTime = attendanceLog.filter(a => a.status === "Present").length;
+            const late = attendanceLog.filter(a => a.status === "Late").length;
+            const absent = attendanceLog.filter(a => a.status === "Absent").length;
+            document.getElementById("taOnTime").textContent = onTime;
+            document.getElementById("taLate").textContent = late;
+            document.getElementById("taAbsent").textContent = absent;
+
+            const scheduled = shiftSchedule.length;
+            const open = shiftSchedule.filter(s => s.status === "Open").length;
+            const filled = shiftSchedule.filter(s => s.status === "Filled" || s.status === "Scheduled" || s.status === "On Call").length;
+            document.getElementById("ssmScheduled").textContent = scheduled;
+            document.getElementById("ssmOpen").textContent = open;
+            document.getElementById("ssmCoverage").textContent = scheduled ? Math.round((filled / scheduled) * 100) + "%" : "0%";
+
+            const totalLeaves = leaveRequests.length;
+            const pendingLeaves = leaveRequests.filter(l => l.status === "Pending").length;
+            const approvedLeaves = leaveRequests.filter(l => l.status === "On Leave").length;
+            document.getElementById("lmTotalRequests").textContent = totalLeaves;
+            document.getElementById("lmPendingRequests").textContent = pendingLeaves;
+            document.getElementById("lmApprovedRequests").textContent = approvedLeaves;
+
+            const submitted = timesheets.length;
+            const pending = timesheets.filter(t => t.status === "Pending").length;
+            const totalOT = timesheets.reduce((sum, t) => sum + (Number(t.overtime) || 0), 0);
+            document.getElementById("tsmSubmitted").textContent = submitted;
+            document.getElementById("tsmPending").textContent = pending;
+            document.getElementById("tsmOvertime").textContent = totalOT + "h";
+
+            const totalLogged = attendanceLog.length;
+            const attendanceRate = totalLogged ? Math.round((onTime / totalLogged) * 100) : 0;
+            document.getElementById("ovClockedIn").textContent = attendanceLog.filter(a => a.clockIn && a.clockIn !== "--:--").length;
+            document.getElementById("ovAttendanceRate").textContent = attendanceRate + "%";
+            document.getElementById("ovOnLeave").textContent = approvedLeaves;
+            document.getElementById("ovPendingApprovals").textContent = pending;
+
+            const avgRate = deptSummary.length ? Math.round(deptSummary.reduce((sum, d) => sum + (Number(d.rate) || 0), 0) / deptSummary.length) : 0;
+            document.getElementById("waAttendanceRate").textContent = avgRate + "%";
+            document.getElementById("waAbsenteeism").textContent = totalLogged ? Math.round((absent / totalLogged) * 100) + "%" : "0%";
+        }
+
+        function renderAll() {
+            renderTA();
+            renderSSM();
+            renderLM();
+            renderTSM();
+            renderWA();
+            renderRecentActivity();
+            updateKPIs();
+            updateMyStats();
+            renderUsers();
+            applyEmployeeSearch();
+        }
+
+        /* ---------------- EMPLOYEE SELF-SERVICE ---------------- */
+        async function clockInOut() {
+            const name = centinelSession.name || "Employee";
+            try {
+                const result = await apiSend("POST", "attendance.php", {
+                    action: "clock",
+                    name: name,
+                    department: centinelSession.department || "",
+                });
+                if (result.action === "clock_in") {
+                    addNotification("Clocked In", `${name} clocked in at ${result.time}.`, "fa-fingerprint", "blue");
+                } else {
+                    addNotification("Clocked Out", `${name} clocked out at ${result.time}.`, "fa-fingerprint", "blue");
+                }
+                await loadAllData();
+            } catch (err) {
+                alert("Could not record attendance: " + err.message);
+            }
+        }
+
+        function updateMyStats() {
+            if (currentSystemMode !== "employee") return;
+            const rateEl = document.getElementById("myAttendanceRate");
+            const presentEl = document.getElementById("myPresentCount");
+            const lateEl = document.getElementById("myLateCount");
+            if (!rateEl || !presentEl || !lateEl) return;
+
+            const mine = attendanceLog.filter(a => a.name === centinelSession.name);
+            const present = mine.filter(a => a.status === "Present").length;
+            const late = mine.filter(a => a.status === "Late").length;
+            const rate = mine.length ? Math.round((present / mine.length) * 100) : 0;
+
+            rateEl.textContent = rate + "%";
+            presentEl.textContent = present;
+            lateEl.textContent = late;
+        }
+
+        /* ---------------- MY PROFILE ---------------- */
+        function loadProfileForm() {
+            const nameEl = document.getElementById("profName");
+            if (!nameEl) return;
+            document.getElementById("profName").value = centinelSession.name || "";
+            document.getElementById("profEmail").value = centinelSession.user || "";
+            document.getElementById("profRole").value = (centinelSession.role || "employee").toUpperCase();
+
+            const acc = allUsers.find(u => u.id === centinelSession.id);
+            document.getElementById("profPhone").value = acc ? (acc.phone || "") : "";
+            document.getElementById("profCountry").value = acc ? (acc.country || "") : "";
+        }
+
+        const formProfileEl = document.getElementById("formProfile");
+        if (formProfileEl) {
+            formProfileEl.addEventListener("submit", async function (e) {
+                e.preventDefault();
+                const newName = document.getElementById("profName").value.trim() || centinelSession.name;
+                const newPhone = document.getElementById("profPhone").value.trim();
+                const newCountry = document.getElementById("profCountry").value.trim();
+
+                try {
+                    await apiSend("PATCH", `users.php?id=${centinelSession.id}`, {
+                        name: newName, phone: newPhone, country: newCountry,
+                    });
+
+                    centinelSession.name = newName;
+                    const sessionStore = localStorage.getItem("centinelSession") ? localStorage : sessionStorage;
+                    sessionStore.setItem("centinelSession", JSON.stringify(centinelSession));
+
+                    document.getElementById("userAvatar").title = newName;
+                    addNotification("Profile Updated", "Your profile details were saved.", "fa-id-badge", "green");
+                    await loadAllData();
+                } catch (err) {
+                    alert("Could not save your profile: " + err.message);
+                }
+            });
+        }
+
+        /* ---------------- USER ACCOUNTS (HR / ADMIN ONLY) ---------------- */
+        function renderUsers() {
+            const tbody = document.getElementById("usersRows");
+            if (!tbody) return;
+            if (!allUsers.length) {
+                tbody.innerHTML = `<tr><td colspan="5" class="search-no-results">No registered accounts found.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = allUsers.map((a) => `
+          <tr>
+            <td>${a.name}</td>
+            <td>${a.email}</td>
+            <td>${a.username || "—"}</td>
+            <td>
+              <select class="form-select form-select-sm" style="width:auto;display:inline-block;" onchange="changeUserRole(${a.id}, this.value)">
+                <option value="employee" ${a.role === "employee" ? "selected" : ""}>Employee</option>
+                <option value="manager" ${a.role === "manager" ? "selected" : ""}>Manager</option>
+                <option value="hr" ${a.role === "hr" ? "selected" : ""}>HR / Admin</option>
+              </select>
+            </td>
+            <td><button class="icon-btn" style="width:30px;height:30px;border-radius:8px;" onclick="deleteUserAccount(${a.id})" title="Remove account"><i class="fa-solid fa-trash" style="font-size:.75rem;"></i></button></td>
+          </tr>
+        `).join("");
+        }
+
+        async function changeUserRole(id, newRole) {
+            const acc = allUsers.find(u => u.id === id);
+            if (!acc) return;
+            try {
+                await apiSend("PATCH", `users.php?id=${id}`, { role: newRole });
+
+                if (centinelSession.id === id) {
+                    centinelSession.role = newRole;
+                    const sessionStore = localStorage.getItem("centinelSession") ? localStorage : sessionStorage;
+                    sessionStore.setItem("centinelSession", JSON.stringify(centinelSession));
+                }
+                addNotification("User Role Updated", `${acc.name} is now set as ${newRole.toUpperCase()}.`, "fa-users-gear", "blue");
+                await loadAllData();
+                if (centinelSession.id === id) switchSystemMode(newRole);
+            } catch (err) {
+                alert("Could not update role: " + err.message);
+            }
+        }
+
+        async function deleteUserAccount(id) {
+            const acc = allUsers.find(u => u.id === id);
+            if (!acc) return;
+            try {
+                await apiSend("DELETE", `users.php?id=${id}`);
+                addNotification("User Account Removed", `${acc.name}'s account was removed from the system.`, "fa-user-slash", "orange");
+                await loadAllData();
+            } catch (err) {
+                alert("Could not remove account: " + err.message);
+            }
+        }
+
+        /* ---------------- EMPLOYEE SEARCH ---------------- */
+        function applyEmployeeSearch() {
+            const searchInput = document.getElementById("employeeSearch");
+            const query = searchInput ? searchInput.value.trim().toLowerCase() : "";
+
+            document.querySelectorAll(".table-custom tbody[id]").forEach((tbody) => {
+                const rows = tbody.querySelectorAll("tr");
+                let visibleCount = 0;
+
+                rows.forEach((row) => {
+                    const matches = !query || row.textContent.toLowerCase().includes(query);
+                    row.style.display = matches ? "" : "none";
+                    if (matches) visibleCount++;
+                });
+
+                let emptyRow = tbody.querySelector(".search-empty-row");
+                if (query && visibleCount === 0) {
+                    if (!emptyRow) {
+                        emptyRow = document.createElement("tr");
+                        emptyRow.className = "search-empty-row";
+                        const colCount = tbody.parentElement.querySelectorAll("thead th").length || 1;
+                        emptyRow.innerHTML = `<td colspan="${colCount}" class="search-no-results">No matching employees found.</td>`;
+                        tbody.appendChild(emptyRow);
+                    }
+                    emptyRow.style.display = "";
+                } else if (emptyRow) {
+                    emptyRow.style.display = "none";
+                }
+            });
+        }
+
+        const employeeSearchInput = document.getElementById("employeeSearch");
+        if (employeeSearchInput) {
+            employeeSearchInput.addEventListener("input", applyEmployeeSearch);
+        }
+
+        async function deleteRow(type, idx) {
+            const endpoints = { ta: "attendance.php", ssm: "shifts.php", lm: "leave.php", tsm: "timesheets.php", wa: "departments.php" };
+            try {
+                await apiSend("DELETE", `${endpoints[type]}?id=${idx}`);
+                await loadAllData();
+            } catch (err) {
+                alert("Could not delete the record: " + err.message);
+            }
+        }
+
+        /* ---------------- FORM SUBMISSION HANDLERS ---------------- */
+        document.getElementById("formTA").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const name = document.getElementById("taName").value || "EMPLOYEE";
+            const status = document.getElementById("taStatus").value;
+            try {
+                await apiSend("POST", "attendance.php", {
+                    name: name,
+                    department: document.getElementById("taDept").value || "DEPARTMENT",
+                    clockIn: document.getElementById("taIn").value || "--:--",
+                    clockOut: document.getElementById("taOut").value || "--:--",
+                    status: status,
+                });
+                this.reset();
+                bootstrap.Modal.getInstance(document.getElementById("modalTA")).hide();
+                addNotification("Clock Activity Added", `${name} marked as ${status}.`, "fa-fingerprint", "blue");
+                await loadAllData();
+            } catch (err) {
+                alert("Could not save the entry: " + err.message);
+            }
+        });
+
+        document.getElementById("formSSM").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const name = document.getElementById("ssmName").value || "EMPLOYEE";
+            const shift = document.getElementById("ssmShift").value;
+            try {
+                await apiSend("POST", "shifts.php", {
+                    name: name,
+                    shift: shift,
+                    date: document.getElementById("ssmDate").value || "DATE",
+                    time: document.getElementById("ssmTime").value || "TIME",
+                    location: document.getElementById("ssmLocation").value || "LOCATION",
+                    status: document.getElementById("ssmStatus").value,
+                });
+                this.reset();
+                bootstrap.Modal.getInstance(document.getElementById("modalSSM")).hide();
+                addNotification("Shift Scheduled", `Assigned ${shift} Shift to ${name}.`, "fa-calendar-days", "blue");
+                await loadAllData();
+            } catch (err) {
+                alert("Could not save the shift: " + err.message);
+            }
+        });
+
+        document.getElementById("formLM").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const name = document.getElementById("lmName").value || "EMPLOYEE";
+            const type = document.getElementById("lmType").value;
+            const status = document.getElementById("lmStatus").value || "Pending";
+            try {
+                await apiSend("POST", "leave.php", {
+                    name: name,
+                    type: type,
+                    start: document.getElementById("lmStart").value || "DATE",
+                    end: document.getElementById("lmEnd").value || "DATE",
+                    reason: document.getElementById("lmReason").value || "—",
+                    status: status,
+                });
+                this.reset();
+                bootstrap.Modal.getInstance(document.getElementById("modalLM")).hide();
+                addNotification("Leave Request Logged", `${name} filed for ${type} (${status}).`, "fa-plane-departure", "orange");
+                await loadAllData();
+            } catch (err) {
+                alert("Could not submit the leave request: " + err.message);
+            }
+        });
+
+        document.getElementById("formTSM").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const name = document.getElementById("tsmName").value || "EMPLOYEE";
+            try {
+                await apiSend("POST", "timesheets.php", {
+                    name: name,
+                    weekEnding: document.getElementById("tsmWeek").value || "DATE",
+                    regular: Number(document.getElementById("tsmRegular").value) || 0,
+                    overtime: Number(document.getElementById("tsmOT").value) || 0,
+                    status: document.getElementById("tsmStatus").value,
+                });
+                this.reset();
+                bootstrap.Modal.getInstance(document.getElementById("modalTSM")).hide();
+                addNotification("Timesheet Logged", `Updated details registered for ${name}.`, "fa-file-invoice", "green");
+                await loadAllData();
+            } catch (err) {
+                alert("Could not submit the timesheet: " + err.message);
+            }
+        });
+
+        document.getElementById("formWA").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const dept = document.getElementById("waDept").value || "DEPARTMENT";
+            try {
+                await apiSend("POST", "departments.php", {
+                    dept: dept,
+                    headcount: Number(document.getElementById("waHeadcount").value) || 0,
+                    rate: Number(document.getElementById("waRate").value) || 0,
+                    overtime: Number(document.getElementById("waOvertime").value) || 0,
+                    status: document.getElementById("waStatus").value,
+                });
+                this.reset();
+                bootstrap.Modal.getInstance(document.getElementById("modalWA")).hide();
+                addNotification("Department Registered", `${dept} added into tracking indices.`, "fa-chart-line", "blue");
+                await loadAllData();
+            } catch (err) {
+                alert("Could not save the department: " + err.message);
+            }
+        });
+
+        /* ---------------- CHARTS INITIALIZATION ---------------- */
+        Chart.defaults.font.family = "'DM Sans', sans-serif";
+        Chart.defaults.color = COLORS.slate600;
+
+        new Chart(document.getElementById("chartAttendanceTrend"), {
+            type: "line",
+            data: {
+                labels: attendanceTrend.map((d) => d.wk),
+                datasets: [
+                    { label: "Present", data: attendanceTrend.map((d) => d.present), borderColor: COLORS.blue, backgroundColor: COLORS.blue, tension: 0.35, pointRadius: 3 },
+                    { label: "Absent", data: attendanceTrend.map((d) => d.absent), borderColor: COLORS.navy700, backgroundColor: COLORS.navy700, tension: 0.35, pointRadius: 3 },
+                ],
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: "bottom", labels: { boxWidth: 10, font: { size: 11 } } } },
+                scales: { x: { grid: { display: false } }, y: { grid: { color: "#eef3f8" } } },
+            },
+        });
+
+        new Chart(document.getElementById("chartLeaveType"), {
+            type: "doughnut",
+            data: {
+                labels: leaveTypeData.map((d) => d.name),
+                datasets: [{ data: leaveTypeData.map((d) => d.value), backgroundColor: [COLORS.blue, COLORS.navy700, COLORS.slate600, "#8fb9d8"] }],
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: "bottom", labels: { boxWidth: 10, font: { size: 11 } } } },
+            },
+        });
+
+        function makeDeptChart(ctxId, dataArr) {
+            new Chart(document.getElementById(ctxId), {
+                type: "bar",
+                data: {
+                    labels: dataArr.map((d) => d.dept),
+                    datasets: [{ label: "Attendance %", data: dataArr.map((d) => d.rate), backgroundColor: COLORS.blue, borderRadius: 6 }],
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { grid: { display: false } }, y: { grid: { color: "#eef3f8" } } },
+                },
+            });
+        }
+        makeDeptChart("chartDeptAttendance", deptAttendance);
+        makeDeptChart("chartWaDept", deptAttendance);
+
+        new Chart(document.getElementById("chartOvertime"), {
+            type: "bar",
+            data: {
+                labels: overtimeTrend.map((d) => d.wk),
+                datasets: [{ label: "Overtime Hours", data: overtimeTrend.map((d) => d.hours), backgroundColor: COLORS.blue, borderRadius: 6 }],
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { x: { grid: { display: false } }, y: { grid: { color: "#eef3f8" } } },
+            },
+        });
+
+        new Chart(document.getElementById("chartHeadcount"), {
+            type: "line",
+            data: {
+                labels: headcountTrend.map((d) => d.mo),
+                datasets: [{ label: "Headcount", data: headcountTrend.map((d) => d.count), borderColor: COLORS.blue, backgroundColor: COLORS.blue, tension: 0.35, pointRadius: 3, fill: false }],
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { x: { grid: { display: false } }, y: { grid: { color: "#eef3f8" } } },
+            },
+        });
+
+        /* ---------------- NAVIGATION ---------------- */
+        const buttons = document.querySelectorAll(".module-btn");
+        buttons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const view = btn.dataset.view;
+
+                buttons.forEach((b) => b.classList.remove("active"));
+                btn.classList.add("active");
+
+                document.querySelectorAll(".view-section").forEach((s) => s.classList.remove("active"));
+                document.getElementById("view-" + view).classList.add("active");
+
+                document.getElementById("viewTitle").textContent = VIEW_META[view].title;
+                document.getElementById("viewSubtitle").textContent = VIEW_META[view].subtitle;
+
+                document.getElementById("sidebar").classList.remove("open");
+            });
+        });
+
+        document.getElementById("menuToggle").addEventListener("click", () => {
+            document.getElementById("sidebar").classList.toggle("open");
+        });
+
+        /* ---------------- SELF-SERVICE FORM PREFILL ---------------- */
+        document.getElementById("modalLM").addEventListener("show.bs.modal", () => {
+            const lmNameInput = document.getElementById("lmName");
+            if (currentSystemMode === "employee") {
+                lmNameInput.value = centinelSession.name || "";
+                lmNameInput.readOnly = true;
+            } else {
+                lmNameInput.readOnly = false;
+            }
+        });
+
+        document.getElementById("modalTSM").addEventListener("show.bs.modal", () => {
+            const tsmNameInput = document.getElementById("tsmName");
+            if (currentSystemMode === "employee") {
+                tsmNameInput.value = centinelSession.name || "";
+                tsmNameInput.readOnly = true;
+            } else {
+                tsmNameInput.readOnly = false;
+            }
+        });
+
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+            localStorage.removeItem("centinelSession");
+            sessionStorage.removeItem("centinelSession");
+            window.location.href = "travel-login.html";
+        });
+
+        /* ---------------- INITIALIZE ---------------- */
+        renderNotifications();
+
+        // Reflect the logged-in user's role and name from login.html
+        document.getElementById("userAvatar").title = centinelSession.name || "";
+        if (centinelSession.role === "employee") {
+            currentSystemMode = "employee";
+        } else if (centinelSession.role === "manager") {
+            currentSystemMode = "manager";
+        } else {
+            currentSystemMode = "hr";
+        }
+        switchSystemMode(currentSystemMode);
+        loadAllData();
+    </script>
+</body>
+
+</html>
