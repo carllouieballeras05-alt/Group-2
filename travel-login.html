@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Travel &amp; Tours · Sign In</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Anton&family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=Moontime&family=Poppins:wght@800;900&family=Caveat:wght@600;700&display=swap"
+        rel="stylesheet" />
+
+    <link rel="stylesheet" href="travel-login.css?v=3" />
+</head>
+
+<body class="tt-body">
+
+    <!-- LEFT — photo hero -->
+    <section class="tt-hero">
+        <svg class="tt-doodle-top" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="30" cy="30" rx="24" ry="20" fill="none" stroke="rgba(255,255,255,0.55)"
+                stroke-width="1.5" stroke-dasharray="2,6" stroke-linecap="round" transform="rotate(10 30 30)" />
+        </svg>
+        <svg class="tt-doodle-bottom" viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4,10 C 30,4 40,30 20,42 C 4,52 8,74 32,78 C 56,82 52,58 78,60 C 104,62 100,90 128,92 C 145,93 152,80 156,68"
+                fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.5" stroke-dasharray="2,7"
+                stroke-linecap="round" />
+        </svg>
+
+        <div class="tt-hero-top">
+            <div class="tt-brand">
+                <div class="tt-brand-icon">
+                    <i class="fa-solid fa-earth-americas"></i>
+                    <i class="fa-solid fa-plane tt-brand-icon-plane"></i>
+                </div>
+                <div>
+                    <div class="tt-brand-name">
+                        <span class="tt-brand-line2">TRAVEL <span class="accent">&amp; TOURS</span></span>
+                    </div>
+                    <div class="tt-brand-tag">MANAGE EMPLOYEES · OPTIMIZE SCHEDULES · IMPROVE PRODUCTIVITY</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tt-hero-mid">
+            <div class="tt-eyebrow">Your workday starts here</div>
+            <div class="tt-hero-title">YOUR TEAM</div>
+            <div class="tt-hero-script">In Sync</div>
+            <span class="tt-hero-underline"></span>
+            <p class="tt-hero-copy">
+                Clock in, manage shifts, and track attendance — all from one
+                connected workspace built for your workforce.
+            </p>
+        </div>
+
+        <svg class="tt-skyline" viewBox="0 0 800 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="40" width="45" height="50" />
+            <rect x="45" y="55" width="30" height="35" />
+            <rect x="80" y="25" width="38" height="65" />
+            <rect x="123" y="48" width="26" height="42" />
+            <rect x="154" y="15" width="42" height="75" />
+            <rect x="200" y="50" width="34" height="40" />
+            <rect x="238" y="35" width="28" height="55" />
+            <rect x="270" y="58" width="46" height="32" />
+            <rect x="320" y="20" width="36" height="70" />
+            <rect x="360" y="45" width="30" height="45" />
+            <rect x="394" y="30" width="40" height="60" />
+            <rect x="438" y="55" width="26" height="35" />
+            <rect x="468" y="12" width="44" height="78" />
+            <rect x="516" y="42" width="32" height="48" />
+            <rect x="552" y="58" width="28" height="32" />
+            <rect x="584" y="24" width="38" height="66" />
+            <rect x="626" y="48" width="30" height="42" />
+            <rect x="660" y="34" width="42" height="56" />
+            <rect x="706" y="55" width="26" height="35" />
+            <rect x="736" y="18" width="44" height="72" />
+            <rect x="784" y="46" width="16" height="44" />
+        </svg>
+
+        <div class="tt-hero-bottom">
+            <div class="tt-contact-row">
+                <div class="tt-contact-pill"><i class="fa-solid fa-phone"></i></div>
+                <div class="tt-contact-pill"><i class="fa-solid fa-globe"></i></div>
+                <div class="tt-contact-pill"><i class="fa-solid fa-envelope"></i></div>
+                <div class="tt-contact-pill"><i class="fa-solid fa-location-dot"></i></div>
+            </div>
+            <div class="tt-hero-location"><i class="fa-solid fa-map-pin"></i> Philippines</div>
+        </div>
+    </section>
+
+    <!-- RIGHT — auth form -->
+    <main class="tt-form-side">
+        <div class="tt-card">
+            <div class="tt-card-icon"><i class="fa-solid fa-user-plus"></i></div>
+            <div class="tt-card-header">
+                <h1 class="heading-font" id="ttHeading">Welcome Back!</h1>
+                <p id="ttSubheading">Login to your account and continue your journey with us.</p>
+            </div>
+
+            <div class="tt-toggle-group">
+                <button type="button" class="tt-toggle-btn active" id="tabSignIn" onclick="switchTab('signin')">Sign In</button>
+                <button type="button" class="tt-toggle-btn" id="tabSignUp" onclick="switchTab('signup')">Sign Up</button>
+            </div>
+
+            <div class="tt-alert" id="ttAlert">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span id="ttAlertText">Something went wrong.</span>
+            </div>
+            <div class="tt-success" id="ttSuccess">
+                <i class="fa-solid fa-circle-check"></i>
+                <span id="ttSuccessText">Success!</span>
+            </div>
+
+            <!-- SIGN IN -->
+            <form class="tt-form active" id="formSignIn">
+                <div class="tt-field">
+                    <label for="siUser">Email or Username</label>
+                    <div class="tt-input-wrap">
+                        <i class="fa-regular fa-user field-icon"></i>
+                        <input type="text" class="tt-input" id="siUser" placeholder="Email or Username" required />
+                    </div>
+                </div>
+
+                <div class="tt-field">
+                    <label for="siPassword">Password</label>
+                    <div class="tt-input-wrap">
+                        <i class="fa-solid fa-lock field-icon"></i>
+                        <input type="password" class="tt-input" id="siPassword" placeholder="Password" required />
+                        <button type="button" class="tt-toggle-visibility" onclick="toggleVisibility('siPassword', this)">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="tt-row-between">
+                    <label class="tt-check">
+                        <input type="checkbox" id="siRemember" />
+                        Remember me
+                    </label>
+                    <a href="#" class="tt-link">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="tt-submit-btn">
+                    <i class="fa-solid fa-plane"></i>
+                    <span class="btn-label">LOGIN</span>
+                </button>
+
+                <div class="tt-divider">OR</div>
+
+                <button type="button" class="tt-google-btn">
+                    <svg class="tt-google-icon" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z" />
+                        <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z" />
+                        <path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.68 9c0-.59.1-1.17.27-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z" />
+                        <path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z" />
+                    </svg>
+                    Login with Google
+                </button>
+            </form>
+
+            <!-- SIGN UP -->
+            <form class="tt-form" id="formSignUp">
+                <div class="tt-row-2">
+                    <div class="tt-field">
+                        <label for="suFirstName">First Name</label>
+                        <div class="tt-input-wrap">
+                            <i class="fa-regular fa-user field-icon"></i>
+                            <input type="text" class="tt-input" id="suFirstName" placeholder="Juan" required />
+                        </div>
+                    </div>
+                    <div class="tt-field">
+                        <label for="suLastName">Last Name</label>
+                        <div class="tt-input-wrap">
+                            <i class="fa-regular fa-user field-icon"></i>
+                            <input type="text" class="tt-input" id="suLastName" placeholder="Dela Cruz" required />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tt-field">
+                    <label for="suEmail">Email Address</label>
+                    <div class="tt-input-wrap">
+                        <i class="fa-regular fa-envelope field-icon"></i>
+                        <input type="email" class="tt-input" id="suEmail" placeholder="you@email.com" required />
+                    </div>
+                </div>
+
+                <div class="tt-field">
+                    <label for="suUsername">Username</label>
+                    <div class="tt-input-wrap">
+                        <i class="fa-solid fa-at field-icon"></i>
+                        <input type="text" class="tt-input" id="suUsername" placeholder="juandelacruz" required />
+                    </div>
+                </div>
+
+                <div class="tt-field">
+                    <label for="suPassword">Password</label>
+                    <div class="tt-input-wrap">
+                        <i class="fa-solid fa-lock field-icon"></i>
+                        <input type="password" class="tt-input" id="suPassword" placeholder="Create a password" required
+                            oninput="updateStrength()" />
+                        <button type="button" class="tt-toggle-visibility" onclick="toggleVisibility('suPassword', this)">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="tt-strength">
+                        <div class="tt-strength-bar" id="bar1"></div>
+                        <div class="tt-strength-bar" id="bar2"></div>
+                        <div class="tt-strength-bar" id="bar3"></div>
+                        <div class="tt-strength-bar" id="bar4"></div>
+                    </div>
+                </div>
+
+                <div class="tt-field">
+                    <label for="suConfirm">Confirm Password</label>
+                    <div class="tt-input-wrap">
+                        <i class="fa-solid fa-lock field-icon"></i>
+                        <input type="password" class="tt-input" id="suConfirm" placeholder="Re-enter your password" required />
+                        <button type="button" class="tt-toggle-visibility" onclick="toggleVisibility('suConfirm', this)">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="tt-row-2">
+                    <div class="tt-field">
+                        <label for="suPhone">Phone Number</label>
+                        <div class="tt-input-wrap">
+                            <i class="fa-solid fa-phone field-icon"></i>
+                            <input type="tel" class="tt-input" id="suPhone" placeholder="09XX XXX XXXX" required />
+                        </div>
+                    </div>
+                    <div class="tt-field">
+                        <label for="suCountry">Country</label>
+                        <div class="tt-input-wrap">
+                            <i class="fa-solid fa-earth-asia field-icon"></i>
+                            <select class="tt-input tt-select" id="suCountry" required>
+                                <option value="" disabled selected>Select</option>
+                                <option>Philippines</option>
+                                <option>United States</option>
+                                <option>Singapore</option>
+                                <option>Japan</option>
+                                <option>Australia</option>
+                                <option>United Kingdom</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tt-field">
+                    <label>Account Type</label>
+                    <div class="tt-role-group" id="suRoleGroup">
+                        <label class="tt-role-option selected" data-role="hr">
+                            <input type="radio" name="suRole" value="hr" checked />
+                            <i class="fa-solid fa-user-tie"></i>
+                            <span>HR</span>
+                        </label>
+                        <label class="tt-role-option" data-role="manager">
+                            <input type="radio" name="suRole" value="manager" />
+                            <i class="fa-solid fa-user-gear"></i>
+                            <span>Manager</span>
+                        </label>
+                        <label class="tt-role-option" data-role="employee">
+                            <input type="radio" name="suRole" value="employee" />
+                            <i class="fa-solid fa-user"></i>
+                            <span>Employee</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="tt-row-between">
+                    <label class="tt-check">
+                        <input type="checkbox" id="suTerms" />
+                        I agree to the Terms &amp; Privacy Policy
+                    </label>
+                </div>
+
+                <button type="submit" class="tt-submit-btn">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span class="btn-label">REGISTER</span>
+                </button>
+
+                <div class="tt-divider">OR</div>
+
+                <button type="button" class="tt-google-btn">
+                    <svg class="tt-google-icon" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z" />
+                        <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z" />
+                        <path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.68 9c0-.59.1-1.17.27-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z" />
+                        <path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z" />
+                    </svg>
+                    Sign up with Google
+                </button>
+            </form>
+
+            <div class="tt-switch-line" id="ttSwitchLine">
+                Don't have an account?
+                <a href="#" class="tt-link" onclick="switchTab('signup'); return false;">Sign Up</a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        /* ---------------- HERO ENTRANCE + PARALLAX ---------------- */
+        function timeBasedGreeting() {
+            const hour = new Date().getHours();
+            if (hour < 12) return "Good morning — your workday starts here";
+            if (hour < 18) return "Good afternoon — your workday starts here";
+            return "Good evening — your workday starts here";
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            const eyebrow = document.querySelector(".tt-eyebrow");
+            if (eyebrow) eyebrow.textContent = timeBasedGreeting();
+
+            document.querySelectorAll(".tt-doodle-top, .tt-doodle-bottom").forEach((doodle, i) => {
+                setTimeout(() => doodle.classList.add("tt-draw"), 500 + i * 200);
+            });
+
+            document.querySelectorAll(".tt-postcard").forEach((card, i) => {
+                setTimeout(() => card.classList.add("tt-in"), 400 + i * 160);
+            });
+        });
+
+        const heroEl = document.querySelector(".tt-hero");
+        if (heroEl) {
+            const postcardsEl = document.querySelector(".tt-postcards");
+            const doodleTopEl = document.querySelector(".tt-doodle-top");
+            const doodleBottomEl = document.querySelector(".tt-doodle-bottom");
+            heroEl.addEventListener("mousemove", (e) => {
+                const rect = heroEl.getBoundingClientRect();
+                const relX = (e.clientX - rect.left) / rect.width - 0.5; // -0.5..0.5
+                const relY = (e.clientY - rect.top) / rect.height - 0.5;
+                if (postcardsEl) postcardsEl.style.transform = `translate(${relX * -14}px, ${relY * -10}px)`;
+                if (doodleTopEl) doodleTopEl.style.transform = `translate(${relX * -8}px, ${relY * -6}px) scale(1)`;
+                if (doodleBottomEl) doodleBottomEl.style.transform = `translate(${relX * 10}px, ${relY * 8}px) scale(1)`;
+            });
+            heroEl.addEventListener("mouseleave", () => {
+                if (postcardsEl) postcardsEl.style.transform = "";
+                if (doodleTopEl) doodleTopEl.style.transform = "";
+                if (doodleBottomEl) doodleBottomEl.style.transform = "";
+            });
+        }
+
+        function switchTab(tab) {
+            const isSignIn = tab === "signin";
+            document.getElementById("tabSignIn").classList.toggle("active", isSignIn);
+            document.getElementById("tabSignUp").classList.toggle("active", !isSignIn);
+
+            const cardEl = document.querySelector(".tt-card");
+            if (cardEl) cardEl.scrollIntoView({ behavior: "smooth", block: "start" });
+
+            const formIn = document.getElementById(isSignIn ? "formSignIn" : "formSignUp");
+            const formOut = document.getElementById(isSignIn ? "formSignUp" : "formSignIn");
+            formOut.classList.remove("active");
+            formIn.classList.add("active", "tt-fade-in");
+            formIn.addEventListener("animationend", function clear() {
+                formIn.classList.remove("tt-fade-in");
+                formIn.removeEventListener("animationend", clear);
+            });
+
+            document.getElementById("ttHeading").textContent = isSignIn ? "Welcome Back!" : "Create Your Account";
+            document.getElementById("ttSubheading").textContent = isSignIn
+                ? "Login to your account and continue your journey with us."
+                : "Join Travel & Tours and start planning your next trip.";
+
+            document.getElementById("ttSwitchLine").innerHTML = isSignIn
+                ? `Don't have an account? <a href="#" class="tt-link" onclick="switchTab('signup'); return false;">Sign Up</a>`
+                : `Already have an account? <a href="#" class="tt-link" onclick="switchTab('signin'); return false;">Sign In</a>`;
+
+            hideMessages();
+        }
+
+        function initRoleGroup(groupId) {
+            const group = document.getElementById(groupId);
+            if (!group) return;
+            group.querySelectorAll(".tt-role-option").forEach((opt) => {
+                opt.addEventListener("click", () => {
+                    group.querySelectorAll(".tt-role-option").forEach((o) => o.classList.remove("selected"));
+                    opt.classList.add("selected");
+                });
+            });
+        }
+        initRoleGroup("suRoleGroup");
+
+        function getSelectedRole(groupId) {
+            const group = document.getElementById(groupId);
+            const checked = group.querySelector("input[type=radio]:checked");
+            return checked ? checked.value : "hr";
+        }
+
+        /* ---------------- API CONFIG ----------------
+           Accounts now live in the MySQL database via api/auth.php
+           instead of localStorage. */
+        const API_BASE = "api/";
+
+        /* ---------------- FIELD VALIDATION HELPERS ---------------- */
+        function markInvalid(el) {
+            el.classList.add("tt-invalid");
+            el.addEventListener("input", function clear() {
+                el.classList.remove("tt-invalid");
+                el.removeEventListener("input", clear);
+            });
+            el.addEventListener("change", function clear() {
+                el.classList.remove("tt-invalid");
+                el.removeEventListener("change", clear);
+            });
+        }
+
+        function setBtnLoading(btn, loadingText) {
+            const label = btn.querySelector(".btn-label");
+            btn.dataset.originalLabel = label ? label.textContent : "";
+            if (label) label.textContent = loadingText;
+            btn.classList.add("tt-loading");
+            btn.disabled = true;
+        }
+
+        function toggleVisibility(fieldId, btn) {
+            const input = document.getElementById(fieldId);
+            const icon = btn.querySelector("i");
+            const isHidden = input.type === "password";
+            input.type = isHidden ? "text" : "password";
+            icon.classList.toggle("fa-eye", !isHidden);
+            icon.classList.toggle("fa-eye-slash", isHidden);
+        }
+
+        function updateStrength() {
+            const val = document.getElementById("suPassword").value;
+            let score = 0;
+            if (val.length >= 8) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            const colors = ["#eef1f5", "#fde8e8", "#fff4e0", "#d2ecff", "#2f94dc"];
+            const barColor = colors[score] || colors[0];
+
+            ["bar1", "bar2", "bar3", "bar4"].forEach((id, i) => {
+                document.getElementById(id).style.background = i < score ? barColor : "#eef1f5";
+            });
+        }
+
+        function showAlert(message) {
+            hideMessages();
+            document.getElementById("ttAlertText").textContent = message;
+            document.getElementById("ttAlert").classList.add("show");
+        }
+
+        function showSuccess(message) {
+            hideMessages();
+            document.getElementById("ttSuccessText").textContent = message;
+            document.getElementById("ttSuccess").classList.add("show");
+        }
+
+        function hideMessages() {
+            document.getElementById("ttAlert").classList.remove("show");
+            document.getElementById("ttSuccess").classList.remove("show");
+        }
+
+        document.getElementById("formSignIn").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const userField = document.getElementById("siUser");
+            const passField = document.getElementById("siPassword");
+            const user = userField.value.trim();
+            const password = passField.value;
+
+            if (!user) markInvalid(userField);
+            if (!password) markInvalid(passField);
+            if (!user || !password) {
+                showAlert("Please enter both email/username and password.");
+                return;
+            }
+
+            const submitBtn = e.target.querySelector(".tt-submit-btn");
+            setBtnLoading(submitBtn, "SIGNING IN...");
+
+            try {
+                const res = await fetch(API_BASE + "auth.php?action=login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ identifier: user, password: password }),
+                });
+                const result = await res.json();
+
+                if (!res.ok) {
+                    markInvalid(passField);
+                    showAlert(result.error || "Incorrect email/username or password.");
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove("tt-loading");
+                    const label = submitBtn.querySelector(".btn-label");
+                    if (label) label.textContent = submitBtn.dataset.originalLabel || "LOGIN";
+                    return;
+                }
+
+                const remember = document.getElementById("siRemember").checked;
+                const session = {
+                    id: result.user.id,
+                    name: result.user.name,
+                    user: result.user.email,
+                    role: result.user.role,
+                    loggedInAt: new Date().toISOString(),
+                };
+                const store = remember ? localStorage : sessionStorage;
+                // Clear any stale session in the other storage so the two never conflict
+                (remember ? sessionStorage : localStorage).removeItem("centinelSession");
+                store.setItem("centinelSession", JSON.stringify(session));
+
+                showSuccess("Signed in successfully. Redirecting...");
+                setTimeout(() => { window.location.href = "PM.html"; }, 900);
+            } catch (err) {
+                showAlert("Could not reach the server. Make sure PHP/MySQL is running and this page is loaded via http://localhost, not opened as a file.");
+                submitBtn.disabled = false;
+                submitBtn.classList.remove("tt-loading");
+            }
+        });
+
+        document.getElementById("formSignUp").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const fields = {
+                firstName: document.getElementById("suFirstName"),
+                lastName: document.getElementById("suLastName"),
+                email: document.getElementById("suEmail"),
+                username: document.getElementById("suUsername"),
+                password: document.getElementById("suPassword"),
+                confirm: document.getElementById("suConfirm"),
+                phone: document.getElementById("suPhone"),
+                country: document.getElementById("suCountry"),
+            };
+            const terms = document.getElementById("suTerms").checked;
+
+            let missing = false;
+            Object.values(fields).forEach((el) => {
+                if (!el.value.trim()) {
+                    markInvalid(el);
+                    missing = true;
+                }
+            });
+            if (missing) {
+                showAlert("Please fill in all required fields.");
+                return;
+            }
+
+            const firstName = fields.firstName.value.trim();
+            const lastName = fields.lastName.value.trim();
+            const name = `${firstName} ${lastName}`.trim();
+            const email = fields.email.value.trim();
+            const username = fields.username.value.trim();
+            const password = fields.password.value;
+            const confirm = fields.confirm.value;
+            const phone = fields.phone.value.trim();
+            const country = fields.country.value;
+
+            if (password !== confirm) {
+                markInvalid(fields.confirm);
+                showAlert("Passwords do not match.");
+                return;
+            }
+            if (password.length < 8) {
+                markInvalid(fields.password);
+                showAlert("Password must be at least 8 characters long.");
+                return;
+            }
+            if (!terms) {
+                showAlert("Please agree to the Terms and Privacy Policy.");
+                return;
+            }
+
+            const submitBtn = e.target.querySelector(".tt-submit-btn");
+            setBtnLoading(submitBtn, "CREATING ACCOUNT...");
+
+            const role = getSelectedRole("suRoleGroup");
+
+            try {
+                const res = await fetch(API_BASE + "auth.php?action=signup", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, username, password, phone, country, role }),
+                });
+                const result = await res.json();
+
+                if (!res.ok) {
+                    if (/email/i.test(result.error || "")) markInvalid(fields.email);
+                    if (/username/i.test(result.error || "")) markInvalid(fields.username);
+                    showAlert(result.error || "Could not create the account.");
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove("tt-loading");
+                    const label = submitBtn.querySelector(".btn-label");
+                    if (label) label.textContent = submitBtn.dataset.originalLabel || "CREATE ACCOUNT";
+                    return;
+                }
+
+                sessionStorage.setItem("centinelSession", JSON.stringify({
+                    id: result.user.id,
+                    name: result.user.name,
+                    user: result.user.email,
+                    role: result.user.role,
+                    loggedInAt: new Date().toISOString(),
+                }));
+                showSuccess(`Account created for ${name}. Redirecting...`);
+                setTimeout(() => { window.location.href = "PM.html"; }, 900);
+            } catch (err) {
+                showAlert("Could not reach the server. Make sure PHP/MySQL is running and this page is loaded via http://localhost, not opened as a file.");
+                submitBtn.disabled = false;
+                submitBtn.classList.remove("tt-loading");
+            }
+        });
+    </script>
+</body>
+
+</html>
